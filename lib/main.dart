@@ -4,6 +4,7 @@
 
 import 'dart:math' as math;
 
+import 'package:example/screen2.dart';
 import 'package:flutter/material.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
@@ -32,14 +33,18 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+class SampleImage {
+  final String url;
+
+  SampleImage(this.url);
+}
+
 class _MyHomePageState extends State<MyHomePage> {
   static const maxCount = 100;
-  static const double maxHeight = 1000;
   final random = math.Random();
   final scrollDirection = Axis.vertical;
 
   late AutoScrollController controller;
-  late List<List<int>> randomList;
 
   @override
   void initState() {
@@ -48,8 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
         viewportBoundaryGetter: () =>
             Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
         axis: scrollDirection);
-    randomList = List.generate(maxCount,
-        (index) => <int>[index, (maxHeight * random.nextDouble()).toInt()]);
   }
 
   @override
@@ -74,35 +77,46 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: GridView(
+      body: GridView.builder(
         shrinkWrap: true,
         controller: controller,
         physics: const ScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 2 / 3,
-        ),
-        children: randomList.map<Widget>((data) {
-          return Padding(
-            padding: EdgeInsets.all(8),
-            child: _getRow(data[0], math.max(data[1].toDouble(), 50.0)),
+            crossAxisCount: 2, childAspectRatio: 1),
+        itemCount: maxCount,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Screen2(
+                    currentPageValue: index,
+                  ),
+                ),
+              );
+            },
+            child: AutoScrollTag(
+              key: ValueKey(index),
+              index: index,
+              controller: controller,
+              child: Stack(children: [
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      'https://source.unsplash.com/random?sig=$index',
+                    ),
+                  )),
+                ),
+                Text('$index')
+              ]),
+            ),
           );
-        }).toList(),
+        },
       ),
-      // ListView(
-      //   scrollDirection: scrollDirection,
-      //   controller: controller,
-      //   children:
-      //randomList.map<Widget>((data) {
-      //     return Padding(
-      //       padding: EdgeInsets.all(8),
-      //       child: _getRow(data[0], math.max(data[1].toDouble(), 50.0)),
-      //     );
-      //   }).toList(),
-      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: _nextCounter,
         tooltip: 'Increment',
@@ -117,32 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return _scrollToCounter();
   }
 
+//khi pop screen 2 goi func nay
   Future _scrollToCounter() async {
     await controller.scrollToIndex(counter,
         preferPosition: AutoScrollPosition.begin);
     controller.highlight(counter);
   }
-
-  Widget _getRow(int index, double height) {
-    return _wrapScrollTag(
-        index: index,
-        child: Container(
-          padding: EdgeInsets.all(8),
-          alignment: Alignment.topCenter,
-          height: height,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.lightBlue, width: 4),
-              borderRadius: BorderRadius.circular(12)),
-          child: Text('index: $index, height: $height'),
-        ));
-  }
-
-  Widget _wrapScrollTag({required int index, required Widget child}) =>
-      AutoScrollTag(
-        key: ValueKey(index),
-        controller: controller,
-        index: index,
-        child: child,
-        highlightColor: Colors.black.withOpacity(0.1),
-      );
 }
