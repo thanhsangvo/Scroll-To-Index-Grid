@@ -6,8 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Screen2 extends StatefulWidget {
-  Screen2({super.key, required this.currentPageValue, required this.imageTest});
-  final List<SampleImage> imageTest;
+  Screen2(
+      {super.key, required this.currentPageValue, required this.listImageTest});
+  final List<SampleImage> listImageTest;
   final int currentPageValue;
   @override
   State<Screen2> createState() => _Screen2State();
@@ -55,15 +56,17 @@ class _Screen2State extends State<Screen2> {
             print('onPageChanged $index');
             model.extendImagePageChanged(index);
           },
-          itemCount: widget.imageTest.length,
+          itemCount: widget.listImageTest.length,
           itemBuilder: ((ctx, index) {
             return HeroWidget(
               slidePagekey: slidePagekey,
-              tag: widget.imageTest[index].url,
-              child: ExtendedImage.network(widget.imageTest[index].url,
-                  mode: ExtendedImageMode.gesture,
-                  enableSlideOutPage: true,
-                  afterPaintImage: (canvas, rect, image, paint) {}),
+              tag: widget.listImageTest[index].url,
+              child: ExtendedImage.network(
+                widget.listImageTest[index].url,
+                mode: ExtendedImageMode.gesture,
+                enableSlideOutPage: true,
+                imageCacheName: 'Photo',
+              ),
             );
           }),
         ),

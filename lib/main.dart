@@ -1,10 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:example/provider.dart';
 import 'package:example/screen2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,7 +43,7 @@ class SampleImage {
   SampleImage(this.url);
 }
 
-List<SampleImage> testImage = [
+List<SampleImage> listImageTest = [
   SampleImage('https://picsum.photos/id/0/5616/3744'),
   SampleImage('https://picsum.photos/id/1/5616/3744'),
   SampleImage('https://picsum.photos/id/10/2500/1667'),
@@ -72,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const maxCount = 30;
   final scrollDirection = Axis.vertical;
   late AutoScrollController controller;
-  final itemListener = ItemPositionsListener.create();
+
   @override
   void initState() {
     super.initState();
@@ -97,8 +95,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           IconButton(
             onPressed: () {
-              // setState(() => counter = maxCount - 1);
-              // _scrollToCounter();
+              setState(() => counter = maxCount - 1);
+              _scrollToCounter();
             },
             icon: Text('Last'),
           ),
@@ -111,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, childAspectRatio: 1),
-        itemCount: testImage.length,
+        itemCount: listImageTest.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () async {
@@ -120,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     PageRouteBuilder(
                       opaque: false, // set to false
                       pageBuilder: (_, __, ___) => Screen2(
-                        imageTest: testImage,
+                        listImageTest: listImageTest,
                         currentPageValue: index,
                       ),
                     ),
@@ -133,14 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
               index: index,
               controller: controller,
               child: Hero(
-                tag: testImage[index].url,
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image:
-                            CachedNetworkImageProvider(testImage[index].url)),
-                  ),
+                tag: listImageTest[index].url,
+                child: Image(
+                  image: NetworkImage(listImageTest[index].url),
                 ),
               ),
             ),
@@ -170,9 +163,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void _scrollToCounter1() {
     // print('_scrollToCounter $counter');
     final idx = context.read<IndexProvider>().getIndexCurrent;
-    controller.scrollToIndex(idx,
-        duration: const Duration(milliseconds: 1),
-        preferPosition: AutoScrollPosition.begin);
+    controller.scrollToIndex(
+      idx,
+      duration: const Duration(milliseconds: 1),
+    );
     controller.highlight(counter);
   }
 }
