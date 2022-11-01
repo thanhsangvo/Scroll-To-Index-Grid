@@ -1,2 +1,2 @@
-<video src="https://user-images.githubusercontent.com/169707/126715420-991ad821-9ac8-4b66-b79e-e0966e0f3a89.mp4" controls="controls" style="max-width: 730px;">
-</video>
+Full video on Youtube <br />
+[![IMAGE_ALT](https://img.youtube.com/vi/XOkmqKgTG4Y/0.jpg)](https://www.youtube.com/watch?v=XOkmqKgTG4Y)
